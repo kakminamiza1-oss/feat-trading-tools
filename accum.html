@@ -1,0 +1,270 @@
+<!DOCTYPE html><html lang='th'><head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width,initial-scale=1'>
+<title>Trend Rider Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Roboto,sans-serif;background:#0b0e14;color:#e6e6e6;padding:24px}
+.wrap{max-width:1100px;margin:0 auto}
+.head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+h1{font-size:24px;background:linear-gradient(90deg,#22c55e,#38bdf8);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{color:#8b93a7;font-size:13px;margin-top:4px}
+.stats{display:flex;gap:10px}
+.chip{background:#151a24;border:1px solid #232a38;border-radius:10px;padding:8px 14px;font-size:13px}
+.chip b{font-size:18px;display:block}
+.chip.l b{color:#22c55e} .chip.s b{color:#ef4444}
+table{width:100%;border-collapse:collapse;background:#111620;border-radius:14px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.4)}
+th{background:#0f141d;color:#8b93a7;font-size:11px;text-transform:uppercase;letter-spacing:.5px;padding:12px 10px;text-align:left}
+td{padding:12px 10px;border-top:1px solid #1b2230;font-size:14px;vertical-align:middle}
+tr:hover td{background:#161d2b}
+.rank{color:#5b6478;font-weight:700;width:28px}
+.sym{font-weight:700;font-size:15px} .q{color:#5b6478;font-size:10px;margin-left:2px}
+.num{font-variant-numeric:tabular-nums;text-align:right;font-weight:600}
+.sl{color:#f87171} .tp{color:#34d399}
+.rr{display:block;font-size:9px;color:#5b6478;font-weight:400}
+.adx{color:#fbbf24;text-align:center}
+.b{padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700}
+.b.long{background:rgba(34,197,94,.15);color:#22c55e}
+.b.short{background:rgba(239,68,68,.15);color:#ef4444}
+.fresh{font-size:12px}
+.r-long{border-left:3px solid #22c55e} .r-short{border-left:3px solid #ef4444}
+.dots{display:flex;gap:3px}
+.dot{font-size:8px;padding:2px 4px;border-radius:4px;color:#0b0e14;font-weight:700}
+.d-bull{background:#22c55e} .d-bear{background:#ef4444} .d-neu{background:#3b4354;color:#8b93a7}
+.ms{font-size:10px;color:#8b93a7;margin-top:3px}
+.mtf{min-width:120px}
+.empty{text-align:center;color:#5b6478;padding:30px}
+.foot{color:#5b6478;font-size:11px;margin-top:14px;text-align:center}
+
+/* ═══ SHARED NAV (injected) ═══ */
+.xnav{display:flex;gap:6px;align-items:center;padding:10px 16px;background:#0f141d;border-bottom:1px solid #30363d;flex-wrap:wrap}
+.xnav .b{font-weight:800;font-size:15px;background:linear-gradient(90deg,#3fb950,#58a6ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-right:8px}
+.xnav a{color:#8b949e;text-decoration:none;font-size:13px;padding:6px 12px;border-radius:8px;transition:.15s;font-weight:600}
+.xnav a:hover{background:#1b2230;color:#e6edf3}
+.xnav a.cur{color:#3fb950;background:rgba(63,185,80,.1)}
+.xnav .manual{margin-left:auto;background:#1b2230;border:1px solid #30363d;color:#8b949e;padding:6px 12px;border-radius:8px;font-size:12px;cursor:pointer}
+.xnav .manual:hover{color:#e6edf3}
+</style><link rel="stylesheet" href="./tooltip.css">
+</head><body>
+<nav class="xnav">
+  <span class="b">◈ CRYPTO TERMINAL</span>
+  <a href="./index.html">🏠 หน้าแรก</a>
+  <a href="./dipbuy.html">Dip-Buy</a>
+  <a href="./entry.html">Entry Planner</a>
+  <a href="./scan.html">Market Scan</a>
+  <a href="./trend.html">Trend Rider</a>
+  <a href="./top100.html">Top 100</a>
+  <a href="./fav.html">⭐ โปรด</a>
+  <a href="./liqwatch.html">Liquidation</a>
+  <a href="./radar.html">Radar</a>
+  <a href="./session.html">Session</a>
+  <a href="./accum.html" class="cur">Accum</a>
+  <button class="manual" title="คู่มือ">ℹ️ คู่มือ</button>
+</nav>
+<div class='wrap'>
+<div class='head'>
+  <div><h1>🟢 Trend Rider Dashboard</h1>
+  <div class='sub'>EMA 20/50/200 · ADX(14)&gt;25 · MTF 5m/15m/1h/4h/1D · SL=ATR×2 · TF=15m</div></div>
+  <div class='stats'>
+    <div class='chip l'><b>4</b>LONG</div>
+    <div class='chip s'><b>6</b>SHORT</div>
+  </div>
+</div>
+<table><thead><tr>
+  <th>#</th><th>Signal</th><th>เหรียญ</th><th>Entry</th><th>SL</th>
+  <th>TP1</th><th>TP2</th><th>ADX</th><th>MTF</th>
+</tr></thead><tbody>
+        <tr class='r-short'>
+          <td class='rank'>1</td>
+          <td><span class='b short'>🔴 SHORT</span> </td>
+          <td class='sym'>SNXX<span class='q'>USDT</span></td>
+          <td class='num'>13.15</td>
+          <td class='num sl'>13.475</td>
+          <td class='num tp'>12.6626<span class='rr'>1.5R</span></td>
+          <td class='num tp'>12.1751<span class='rr'>3R</span></td>
+          <td class='num adx'>40.5</td>
+          <td class='num' style='color:#22c55e;text-align:center'>33.0</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bear' title='5m:BEAR'>5m</span><span class='dot d-bear' title='15m:BEAR'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-bear' title='4h:BEAR'>4h</span><span class='dot d-bear' title='1d:BEAR'>1d</span></div><div class='ms'>0B / 5S</div></td>
+          <td style='text-align:center'><span class='b' style='background:rgba(139,147,167,.15);color:#8b93a7'>low</span></td>
+        </tr>
+        <tr class='r-short'>
+          <td class='rank'>2</td>
+          <td><span class='b short'>🔴 SHORT</span> </td>
+          <td class='sym'>KORU<span class='q'>USDT</span></td>
+          <td class='num'>18.59</td>
+          <td class='num sl'>18.958</td>
+          <td class='num tp'>18.0381<span class='rr'>1.5R</span></td>
+          <td class='num tp'>17.4861<span class='rr'>3R</span></td>
+          <td class='num adx'>29.6</td>
+          <td class='num' style='color:#22c55e;text-align:center'>41.9</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bear' title='5m:BEAR'>5m</span><span class='dot d-bear' title='15m:BEAR'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-bear' title='4h:BEAR'>4h</span><span class='dot d-bear' title='1d:BEAR'>1d</span></div><div class='ms'>0B / 5S</div></td>
+          <td style='text-align:center'><span class='b' style='background:rgba(139,147,167,.15);color:#8b93a7'>low</span></td>
+        </tr>
+        <tr class='r-long'>
+          <td class='rank'>3</td>
+          <td><span class='b long'>🟢 LONG</span> </td>
+          <td class='sym'>AIN<span class='q'>USDT</span></td>
+          <td class='num'>0.19266</td>
+          <td class='num sl'>0.173324</td>
+          <td class='num tp'>0.221664<span class='rr'>1.5R</span></td>
+          <td class='num tp'>0.250668<span class='rr'>3R</span></td>
+          <td class='num adx'>28.6</td>
+          <td class='num' style='color:#22c55e;text-align:center'>60.5</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bull' title='5m:BULL'>5m</span><span class='dot d-bull' title='15m:BULL'>15m</span><span class='dot d-bull' title='1h:BULL'>1h</span><span class='dot d-bull' title='4h:BULL'>4h</span><span class='dot d-bull' title='1d:BULL'>1d</span></div><div class='ms'>5B / 0S</div></td>
+          <td style='text-align:center'><span class='b' style='background:rgba(139,147,167,.15);color:#8b93a7'>low</span></td>
+        </tr>
+        <tr class='r-long'>
+          <td class='rank'>4</td>
+          <td><span class='b long'>🟢 LONG</span> </td>
+          <td class='sym'>BZ<span class='q'>USDT</span></td>
+          <td class='num'>103.91</td>
+          <td class='num sl'>103.122</td>
+          <td class='num tp'>105.093<span class='rr'>1.5R</span></td>
+          <td class='num tp'>106.275<span class='rr'>3R</span></td>
+          <td class='num adx'>26.7</td>
+          <td class='num' style='color:#22c55e;text-align:center'>67.6</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bull' title='5m:BULL'>5m</span><span class='dot d-bull' title='15m:BULL'>15m</span><span class='dot d-bull' title='1h:BULL'>1h</span><span class='dot d-bull' title='4h:BULL'>4h</span><span class='dot d-bull' title='1d:BULL'>1d</span></div><div class='ms'>5B / 0S</div></td>
+          <td style='text-align:center'><span class='b' style='background:rgba(139,147,167,.15);color:#8b93a7'>low</span></td>
+        </tr>
+        <tr class='r-long'>
+          <td class='rank'>5</td>
+          <td><span class='b long'>🟢 LONG</span> </td>
+          <td class='sym'>AKE<span class='q'>USDT</span></td>
+          <td class='num'>0.027828</td>
+          <td class='num sl'>0.0248251</td>
+          <td class='num tp'>0.0323324<span class='rr'>1.5R</span></td>
+          <td class='num tp'>0.0368368<span class='rr'>3R</span></td>
+          <td class='num adx'>25.3</td>
+          <td class='num' style='color:#22c55e;text-align:center'>61.6</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bull' title='5m:BULL'>5m</span><span class='dot d-bull' title='15m:BULL'>15m</span><span class='dot d-bull' title='1h:BULL'>1h</span><span class='dot d-bull' title='4h:BULL'>4h</span><span class='dot d-bull' title='1d:BULL'>1d</span></div><div class='ms'>5B / 0S</div></td>
+          <td style='text-align:center'><span class='b' style='background:rgba(139,147,167,.15);color:#8b93a7'>low</span></td>
+        </tr>
+        <tr class='r-short'>
+          <td class='rank'>6</td>
+          <td><span class='b short'>🔴 SHORT</span> </td>
+          <td class='sym'>SNDK<span class='q'>USDT</span></td>
+          <td class='num'>1522.88</td>
+          <td class='num sl'>1541.19</td>
+          <td class='num tp'>1495.41<span class='rr'>1.5R</span></td>
+          <td class='num tp'>1467.94<span class='rr'>3R</span></td>
+          <td class='num adx'>41.1</td>
+          <td class='num' style='color:#22c55e;text-align:center'>33.0</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bear' title='5m:BEAR'>5m</span><span class='dot d-bear' title='15m:BEAR'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-bear' title='4h:BEAR'>4h</span><span class='dot d-bull' title='1d:BULL'>1d</span></div><div class='ms'>1B / 4S</div></td>
+          <td style='text-align:center'><span class='b' style='background:rgba(139,147,167,.15);color:#8b93a7'>low</span></td>
+        </tr>
+        <tr class='r-short'>
+          <td class='rank'>7</td>
+          <td><span class='b short'>🔴 SHORT</span> </td>
+          <td class='sym'>SAMSUNG<span class='q'>USDT</span></td>
+          <td class='num'>181.05</td>
+          <td class='num sl'>182.456</td>
+          <td class='num tp'>178.94<span class='rr'>1.5R</span></td>
+          <td class='num tp'>176.831<span class='rr'>3R</span></td>
+          <td class='num adx'>36.3</td>
+          <td class='num' style='color:#22c55e;text-align:center'>39.8</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bear' title='5m:BEAR'>5m</span><span class='dot d-bear' title='15m:BEAR'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-bear' title='4h:BEAR'>4h</span><span class='dot d-neu' title='1d:NEUTRAL'>1d</span></div><div class='ms'>0B / 4S</div></td>
+          <td style='text-align:center'><span class='b' style='background:rgba(139,147,167,.15);color:#8b93a7'>low</span></td>
+        </tr>
+        <tr class='r-long'>
+          <td class='rank'>8</td>
+          <td><span class='b long'>🟢 LONG</span> </td>
+          <td class='sym'>ARB<span class='q'>USDT</span></td>
+          <td class='num'>0.14999</td>
+          <td class='num sl'>0.143126</td>
+          <td class='num tp'>0.160286<span class='rr'>1.5R</span></td>
+          <td class='num tp'>0.170582<span class='rr'>3R</span></td>
+          <td class='num adx'>36.1</td>
+          <td class='num' style='color:#22c55e;text-align:center'>61.6</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bull' title='5m:BULL'>5m</span><span class='dot d-bull' title='15m:BULL'>15m</span><span class='dot d-bull' title='1h:BULL'>1h</span><span class='dot d-neu' title='4h:NEUTRAL'>4h</span><span class='dot d-bull' title='1d:BULL'>1d</span></div><div class='ms'>4B / 0S</div></td>
+          <td style='text-align:center'><span class='b' style='background:rgba(139,147,167,.15);color:#8b93a7'>low</span></td>
+        </tr>
+        <tr class='r-short'>
+          <td class='rank'>9</td>
+          <td><span class='b short'>🔴 SHORT</span> </td>
+          <td class='sym'>SKHYNIX<span class='q'>USDT</span></td>
+          <td class='num'>1235.06</td>
+          <td class='num sl'>1246.5</td>
+          <td class='num tp'>1217.9<span class='rr'>1.5R</span></td>
+          <td class='num tp'>1200.74<span class='rr'>3R</span></td>
+          <td class='num adx'>31.6</td>
+          <td class='num' style='color:#22c55e;text-align:center'>37.5</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bear' title='5m:BEAR'>5m</span><span class='dot d-bear' title='15m:BEAR'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-bear' title='4h:BEAR'>4h</span><span class='dot d-neu' title='1d:NEUTRAL'>1d</span></div><div class='ms'>0B / 4S</div></td>
+          <td style='text-align:center'><span class='b' style='background:rgba(139,147,167,.15);color:#8b93a7'>low</span></td>
+        </tr>
+        <tr class='r-short'>
+          <td class='rank'>10</td>
+          <td><span class='b short'>🔴 SHORT</span> </td>
+          <td class='sym'>DOGE<span class='q'>USDT</span></td>
+          <td class='num'>0.08201</td>
+          <td class='num sl'>0.0828957</td>
+          <td class='num tp'>0.0806815<span class='rr'>1.5R</span></td>
+          <td class='num tp'>0.079353<span class='rr'>3R</span></td>
+          <td class='num adx'>27.0</td>
+          <td class='num' style='color:#22c55e;text-align:center'>49.8</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bear' title='5m:BEAR'>5m</span><span class='dot d-bear' title='15m:BEAR'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-bear' title='4h:BEAR'>4h</span><span class='dot d-neu' title='1d:NEUTRAL'>1d</span></div><div class='ms'>0B / 4S</div></td>
+          <td style='text-align:center'><span class='b' style='background:rgba(139,147,167,.15);color:#8b93a7'>low</span></td>
+        </tr></tbody></table>
+<div class='foot'>สแกนสดจาก Binance USD-M Futures · อัปเดต 2026-09-16 01:02:26 · MTF dot = สถานะแต่ละกรอบเวลา (เขียว=BULL แดง=BEAR เทา=NEUTRAL)</div>
+<div class='head' style='margin-top:28px'><div><h2 style='font-size:18px;color:#e6e6e6'>👁️ เหรียญเฝ้าระวัง</h2>
+<div class='sub'>โชว์เสมอแม้ไม่มีสัญญาณ · ADX เขียว=แรงพอ(>25) เหลือง=ยังอ่อน</div></div></div>
+<table><thead><tr>
+  <th>เหรียญ</th><th>ภาพรวม</th><th>ราคา</th><th>ADX</th><th>MTF</th>
+</tr></thead><tbody>
+        <tr>
+          <td class='sym'>BNB<span class='q'>USDT</span></td>
+          <td><span class='dot d-bull' style='font-size:10px;padding:3px 8px'>BULL</span></td>
+          <td class='num'>723.92</td>
+          <td class='num adx' style='color:#fbbf24'>20.0</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bull' title='5m:BULL'>5m</span><span class='dot d-bull' title='15m:BULL'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-neu' title='4h:NEUTRAL'>4h</span><span class='dot d-bull' title='1d:BULL'>1d</span></div><div class='ms'>3B / 1S</div></td>
+        </tr>
+        <tr>
+          <td class='sym'>KAITO<span class='q'>USDT</span></td>
+          <td><span class='dot d-bear' style='font-size:10px;padding:3px 8px'>BEAR</span></td>
+          <td class='num'>0.2957</td>
+          <td class='num adx' style='color:#fbbf24'>16.0</td>
+          <td class='mtf'><div class='dots'><span class='dot d-neu' title='5m:NEUTRAL'>5m</span><span class='dot d-bear' title='15m:BEAR'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-bear' title='4h:BEAR'>4h</span><span class='dot d-bear' title='1d:BEAR'>1d</span></div><div class='ms'>0B / 4S</div></td>
+        </tr>
+        <tr>
+          <td class='sym'>SOL<span class='q'>USDT</span></td>
+          <td><span class='dot d-bear' style='font-size:10px;padding:3px 8px'>BEAR</span></td>
+          <td class='num'>100.13</td>
+          <td class='num adx' style='color:#34d399'>27.6</td>
+          <td class='mtf'><div class='dots'><span class='dot d-neu' title='5m:NEUTRAL'>5m</span><span class='dot d-bear' title='15m:BEAR'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-neu' title='4h:NEUTRAL'>4h</span><span class='dot d-bull' title='1d:BULL'>1d</span></div><div class='ms'>1B / 2S</div></td>
+        </tr>
+        <tr>
+          <td class='sym'>XRP<span class='q'>USDT</span></td>
+          <td><span class='dot d-neu' style='font-size:10px;padding:3px 8px'>NEUTRAL</span></td>
+          <td class='num'>1.4052</td>
+          <td class='num adx' style='color:#fbbf24'>17.4</td>
+          <td class='mtf'><div class='dots'><span class='dot d-neu' title='5m:NEUTRAL'>5m</span><span class='dot d-neu' title='15m:NEUTRAL'>15m</span><span class='dot d-bull' title='1h:BULL'>1h</span><span class='dot d-bull' title='4h:BULL'>4h</span><span class='dot d-bull' title='1d:BULL'>1d</span></div><div class='ms'>3B / 0S</div></td>
+        </tr>
+        <tr>
+          <td class='sym'>ETH<span class='q'>USDT</span></td>
+          <td><span class='dot d-bear' style='font-size:10px;padding:3px 8px'>BEAR</span></td>
+          <td class='num'>2439.8</td>
+          <td class='num adx' style='color:#34d399'>37.3</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bear' title='5m:BEAR'>5m</span><span class='dot d-bear' title='15m:BEAR'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-bull' title='4h:BULL'>4h</span><span class='dot d-bull' title='1d:BULL'>1d</span></div><div class='ms'>2B / 3S</div></td>
+        </tr>
+        <tr>
+          <td class='sym'>ETHFI<span class='q'>USDT</span></td>
+          <td><span class='dot d-bear' style='font-size:10px;padding:3px 8px'>BEAR</span></td>
+          <td class='num'>0.5986</td>
+          <td class='num adx' style='color:#34d399'>29.1</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bear' title='5m:BEAR'>5m</span><span class='dot d-bear' title='15m:BEAR'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-bull' title='4h:BULL'>4h</span><span class='dot d-bull' title='1d:BULL'>1d</span></div><div class='ms'>2B / 3S</div></td>
+        </tr>
+        <tr>
+          <td class='sym'>BEAT<span class='q'>USDT</span></td>
+          <td><span class='dot d-neu' style='font-size:10px;padding:3px 8px'>NEUTRAL</span></td>
+          <td class='num'>0.0836</td>
+          <td class='num adx' style='color:#fbbf24'>14.8</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bull' title='5m:BULL'>5m</span><span class='dot d-bull' title='15m:BULL'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-bear' title='4h:BEAR'>4h</span><span class='dot d-bear' title='1d:BEAR'>1d</span></div><div class='ms'>2B / 3S</div></td>
+        </tr>
+        <tr>
+          <td class='sym'>CRV<span class='q'>USDT</span></td>
+          <td><span class='dot d-bear' style='font-size:10px;padding:3px 8px'>BEAR</span></td>
+          <td class='num'>0.3433</td>
+          <td class='num adx' style='color:#34d399'>26.4</td>
+          <td class='mtf'><div class='dots'><span class='dot d-bull' title='5m:BULL'>5m</span><span class='dot d-bear' title='15m:BEAR'>15m</span><span class='dot d-bear' title='1h:BEAR'>1h</span><span class='dot d-neu' title='4h:NEUTRAL'>4h</span><span class='dot d-bull' title='1d:BULL'>1d</span></div><div class='ms'>2B / 2S</div></td>
+        </tr></tbody></table>
+<div class='foot'>Watchlist: BNB, KAITO, SOL, XRP, ETH, ETHFI, BEAT, CRV</div>
+</div><script src="./tooltip.js"></script>
+</body></html>

@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crypto Accumulation Scanner - CRYPTO TERMINAL</title>
+    <style>
+        /* ============================================================
+           CSS Variables - ธีมมืดเขียวเหมือน Trend Rider
+           ============================================================ */
+        :root {
+            --bg-primary: #0b0e11;
+            --bg-secondary: #151920;
+            --bg-card: #1a1f26;
+            --bg-card-hover: #222831;
+            --border-color: #2a3038;
+            --text-primary: #e8eaed;
+            --text-secondary: #9aa0a6;
+            --text-muted: #5f6368;
+            --accent-green: #00d084;
+            --accent-green-dark: #00a868;
+            --accent-red: #ff4d4d;
+            --accent-orange: #ffa500;
+            --accent-blue: #4dabf7;
+            --accent-purple: #9775fa;
+            --score-a-plus: #00d084;
+            --score-a: #4dabf7;
+            --score-watch: #ffa500;
+            --score-skip: #5f6368;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.5;
+            min-height: 100vh;
+        }
+
+        /* ============================================================
+           Navbar
+           ============================================================ */
+        .navbar {
+            background-color: var(--bg-secondary);
+            border-bottom: 1px solid var(--border-color);
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            height: 60px;
+            gap: 8px;
+            overflow-x: auto;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--accent-green);
+            font-weight: 700;
+            font-size: 16px;
+            text-decoration: none;
+            margin-right: 16px;
+            white-space: nowrap;
+        }
+
+        .nav-brand::before {
+            content: "💎";
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-card);
+        }
+
+        .nav-link.active {
+            color: var(--text-primary);
+            background-color: var(--bg-card);
+            box-shadow: inset 0 0 0 1px var(--border-color);
+        }
+
+        /* ============================================================
+           Main Container
+           ============================================================ */
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        /* ============================================================
+           Header Section
+           ============================================================ */
+        .header-section {
+            margin-bottom: 24px;
+        }
+
+        .page-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .page-title .icon {
+            font-size: 32px;
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .page-subtitle .highlight {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        /* ============================================================
+           Controls Bar
+           ============================================================ */
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px;
+            margin-bottom: 24px;
+        }
+
+        .control-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .btn {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn:hover {
+            background-color: var(--bg-card-hover);
+            border-color: var(--text-muted);
+        }
+
+        .btn-primary {
+            background-color: var(--accent-green);
+            color: #000;
+            border-color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--accent-green-dark);
+        }
+
+        .btn.active {
+            background-color: var(--bg-card-hover);
+            border-color: var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .select-box {
+            background-color: var(--bg-card);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        /* ============================================================
+           Stats Bar
+           ============================================================ */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 16px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* ============================================================
+           Scanner Grid
+           ============================================================ */
+        .scanner-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        /* ============================================================
+           Coin Card
+           ============================================================ */
+        .coin-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            padding: 20px;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .coin-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-blue));
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .coin-card:hover {
+            background-color: var(--bg-card-hover);
+            border-color: var(--text-muted);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .coin-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .coin-name {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .coin-symbol {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .coin-pair {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .score-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            background-color: rgba(0, 208, 132, 0.15);
+            color: var(--accent-green);
+            border: 1px solid rgba(0, 208, 132, 0.3);
+        }
+
+        .score-badge.score-a {
+            background-color: rgba(77, 171, 247, 0.15);
+            color: var(--accent-blue);
+            border-color: rgba(77, 171, 247, 0.3);
+        }
+
+        .score-badge.score-watch {
+            background-color: rgba(255, 165, 0, 0.15);
+            color: var(--accent-orange);
+            border-color: rgba(255, 165, 0, 0.3);
+        }
+
+        .score-badge.score-skip {
+            background-color: rgba(95, 99, 104, 0.15);
+            color: var(--text-muted);
+            border-color: rgba(95, 99, 104, 0.3);
+        }
+
+        .score-dots {
+            display: flex;
+            gap: 3px;
+        }
+
+        .score-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: currentColor;
+            opacity: 0.3;
+        }
+
+        .score-dot.filled {
+            opacity: 1;
+        }
+
+        /* ============================================================
+           Price Section
+           ============================================================ */
+        .price-section {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .current-price {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .price-change {
+            font-size: 14px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        .price-change.positive {
+            color: var(--accent-green);
+            background-color: rgba(0, 208, 132, 0.1);
+        }
+
+        .price-change.negative {
+            color: var(--accent-red);
+            background-color: rgba(255, 77, 77, 0.1);
+        }
+
+        /* ============================================================
+           Chart
+           ============================================================ */
+        .chart-container {
+            height: 60px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .sparkline {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* ============================================================
+           Metrics Grid
+           ============================================================ */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .metric {
+            background-color: var(--bg-card);
+            border-radius: 8px;
+            padding: 10px 12px;
+        }
+
+        .metric-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 2px;
+        }
+
+        .metric-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .metric-value.strong {
+            color: var(--accent-green);
+        }
+
+        .metric-value.weak {
+            color: var(--accent-red);
+        }
+
+        /* ============================================================
+           Criteria Tags
+           ============================================================ */
+        .criteria-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .tag {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background-color: var(--bg-card);
+            color: var(--text-secondary);
+            border: 1px solid var(--border-color);
+        }
+
+        .tag.pass {
+            background-color: rgba(0, 208, 132, 0.1);
+            color: var(--accent-green);
+            border-color: rgba(0, 208, 132, 0.2);
+        }
+
+        .tag.fail {
+            background-color: rgba(255, 77, 77, 0.1);
+            color: var(--accent-red);
+            border-color: rgba(255, 77, 77, 0.2);
+        }
+
+        /* ============================================================
+           Loading & Empty States
+           ============================================================ */
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid var(--border-color);
+            border-top-color: var(--accent-green);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+            background-color: var(--bg-secondary);
+            border-radius: var(--radius);
+            border: 1px dashed var(--border-color);
+        }
+
+        /* ============================================================
+           Footer
+           ============================================================ */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 12px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+
+        /* ============================================================
+           Responsive
+           ============================================================ */
+        @media (max-width: 768px) {
+            .nav-container {
+                height: 54px;
+            }
+
+            .page-title {
+                font-size: 22px;
+            }
+
+            .scanner-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .control-group {
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="nav-brand">CRYPTO TERMINAL</a>
+            <a href="index.html" class="nav-link active">🏠 หน้าแรก</a>
+            <a href="dip-buy.html" class="nav-link">Dip-Buy</a>
+            <a href="entry-planner.html" class="nav-link">Entry Planner</a>
+            <a href="market-scan.html" class="nav-link">Market Scan</a>
+            <a href="trend.html" class="nav-link">Trend Rider</a>
+            <a href="top100.html" class="nav-link">Top 100</a>
+            <a href="favorite.html" class="nav-link">⭐ โปรด</a>
+            <a href="liquidation.html" class="nav-link">Liquidation</a>
+            <a href="radar.html" class="nav-link">Radar</a>
+            <a href="accum.html" class="nav-link">Accum</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Header -->
+        <section class="header-section">
+            <h1 class="page-title">
+                <span class="icon">📊</span>
+                Crypto Accumulation Scanner
+            </h1>
+            <p class="page-subtitle">
+                เกณฑ์ 5 ข้อ: <span class="highlight">สะสมเงิน</span> / 
+                <span class="highlight">Vol&gt;1.5M</span> / 
+                <span class="highlight">ทดสอบซื้อ</span> / 
+                <span class="highlight">Social</span> / 
+                <span class="highlight">Breakout&gt;0.8</span> · 
+                อัปเดต 2026-09-13 22:05
+            </p>
+        </section>
+
+        <!-- Controls -->
+        <div class="controls">
+            <div class="control-group">
+                <span class="control-label">เกรด:</span>
+                <button class="btn active" onclick="filterGrade('all')">ทั้งหมด</button>
+                <button class="btn" onclick="filterGrade('A+')">A+</button>
+                <button class="btn" onclick="filterGrade('A')">A</button>
+                <button class="btn" onclick="filterGrade('Watch')">Watch</button>
+            </div>
+            <div class="control-group">
+                <span class="control-label">เรียงตาม:</span>
+                <select class="select-box" id="sortSelect" onchange="sortCoins()">
+                    <option value="score">คะแนน</option>
+                    <option value="change">% เปลี่ยนแปลง</option>
+                    <option value="volume">Volume</option>
+                    <option value="rsi">RSI</option>
+                </select>
+            </div>
+            <div class="control-group" style="margin-left: auto;">
+                <button class="btn btn-primary" onclick="refreshData()">🔄 รีเฟรช</button>
+            </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-bar">
+            <div class="stat-card">
+                <div class="stat-value" id="statTotal">0</div>
+                <div class="stat-label">เหรียญที่สแกน</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statAPlus">0</div>
+                <div class="stat-label">เกรด A+</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statA">0</div>
+                <div class="stat-label">เกรด A</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="statWatch">0</div>
+                <div class="stat-label">Watch</div>
+            </div>
+        </div>
+
+        <!-- Scanner Grid -->
+        <div class="scanner-grid" id="scannerGrid">
+            <div class="loading">
+                <div class="loading-spinner"></div>
+                กำลังโหลดข้อมูล...
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        Crypto Accumulation Scanner · ดึงข้อมูลจาก Binance · ใช้เพื่อการวิเคราะห์เท่านั้น
+    </footer>
+
+    <script>
+        // ============================================================
+        // ข้อมูลตัวอย่าง (แทนที่ด้วยข้อมูลจริงจาก API ของคุณ)
+        // ============================================================
+        let allCoins = [
+            {
+                symbol: "ENSOUSDT",
+                name: "ENSO",
+                price: 1.0150,
+                change14d: 10.4,
+                high14d: 0.9760,
+                adx: 19.1,
+                rsi: 13.6,
+                volume: 2100000,
+                score: 4,
+                maxScore: 5,
+                grade: "A+",
+                criteria: ["สะสมเงิน", "Vol>1.5M", "ทดสอบซื้อ", "Social", "Breakout>0.8"],
+                passed: [true, true, true, true, false],
+                sparkline: [0.92, 0.94, 0.93, 0.95, 0.96, 0.95, 0.97, 0.98, 0.99, 1.015]
+            },
+            {
+                symbol: "EPICUSDT",
+                name: "EPIC",
+                price: 0.9224,
+                change14d: 8.9,
+                high14d: 1.1627,
+                adx: 6.4,
+                rsi: 29.3,
+                volume: 1800000,
+                score: 4,
+                maxScore: 5,
+                grade: "A+",
+                criteria: ["สะสมเงิน", "Vol>1.5M", "ทดสอบซื้อ", "Social", "Breakout>0.8"],
+                passed: [true, true, true, true, false],
+                sparkline: [0.85, 0.87, 0.86, 0.88, 0.89, 0.90, 0.91, 0.915, 0.92, 0.9224]
+            },
+            {
+                symbol: "AXTIBUSDT",
+                name: "AXTIB",
+                price: 75.3500,
+                change14d: 7.8,
+                high14d: 79.4000,
+                adx: null,
+                rsi: null,
+                volume: 2500000,
+                score: 4,
+                maxScore: 5,
+                grade: "A+",
+                criteria: ["สะสมเงิน", "Vol>1.5M", "ทดสอบซื้อ", "Social", "Breakout>0.8"],
+                passed: [true, true, true, true, false],
+                sparkline: [70, 71, 70.5, 72, 73, 72.5, 74, 74.5, 75, 75.35]
+            },
+            {
+                symbol: "BNBUSDT",
+                name: "BNB",
+                price: 592.0000,
+                change14d: 4.8,
+                high14d: 605.5000,
+                adx: 13.6,
+                rsi: 51.9,
+                volume: 3200000,
+                score: 4,
+                maxScore: 5,
+                grade: "A",
+                criteria: ["สะสมเงิน", "Vol>1.5M", "ทดสอบซื้อ", "Social", "Breakout>0.8"],
+                passed: [true, true, true, false, false],
+                sparkline: [565, 570, 568, 575, 580, 578, 585, 588, 590, 592]
+            },
+            {
+                symbol: "NVDABUSDT",
+                name: "NVDAB",
+                price: 219.1500,
+                change14d: -0.6,
+                high14d: 222.3900,
+                adx: null,
+                rsi: null,
+                volume: 900000,
+                score: 3,
+                maxScore: 5,
+                grade: "Watch",
+                criteria: ["สะสมเงิน", "Vol>1.5M", "ทดสอบซื้อ", "Social", "Breakout>0.8"],
+                passed: [true, false, true, true, false],
+                sparkline: [220, 219.5, 219, 218.5, 219, 219.2, 218.8, 219.1, 219.3, 219.15]
+            }
+        ];
+
+        let currentFilter = 'all';
+
+        // ============================================================
+        // ฟังก์ชันสร้าง Sparkline SVG
+        // ============================================================
+        function createSparkline(data, positive) {
+            if (!data || data.length < 2) return '';
+            
+            const width = 280;
+            const height = 60;
+            const padding = 4;
+            
+            const min = Math.min(...data);
+            const max = Math.max(...data);
+            const range = max - min || 1;
+            
+            const points = data.map((val, i) => {
+                const x = (i / (data.length - 1)) * width;
+                const y = height - padding - ((val - min) / range) * (height - padding * 2);
+                return `${x},${y}`;
+            }).join(' ');
+            
+            const color = positive ? 'var(--accent-green)' : 'var(--accent-red)';
+            const gradientId = `grad-${Math.random().toString(36).substr(2, 9)}`;
+            
+            return `
+                <svg class="sparkline" viewBox="0 0 ${width} ${height}" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="${gradientId}" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:${color};stop-opacity:0.3" />
+                            <stop offset="100%" style="stop-color:${color};stop-opacity:0" />
+                        </linearGradient>
+                    </defs>
+                    <polygon points="0,${height} ${points} ${width},${height}" fill="url(#${gradientId})" />
+                    <polyline points="${points}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+            `;
+        }
+
+        // ============================================================
+        // ฟังก์ชันสร้าง Score Dots
+        // ============================================================
+        function createScoreDots(score, maxScore) {
+            let dots = '';
+            for (let i = 0; i < maxScore; i++) {
+                dots += `<span class="score-dot ${i < score ? 'filled' : ''}"></span>`;
+            }
+            return dots;
+        }
+
+        // ============================================================
+        // ฟังก์ชันกำหนด Class ของ Badge
+        // ============================================================
+        function getBadgeClass(grade) {
+            if (grade === 'A+') return 'score-badge';
+            if (grade === 'A') return 'score-badge score-a';
+            if (grade === 'Watch') return 'score-badge score-watch';
+            return 'score-badge score-skip';
+        }
+
+        // ============================================================
+        // ฟังก์ชันแสดงค่า Metric (แก้ปัญหา null/undefined)
+        // ============================================================
+        function formatMetric(value, suffix = '') {
+            if (value === null || value === undefined || isNaN(value)) {
+                return `<span style="color: var(--text-muted)">-</span>`;
+            }
+            return `${value.toFixed(1)}${suffix}`;
+        }
+
+        // ============================================================
+        // ฟังก์ชันสร้างการ์ดเหรียญ
+        // ============================================================
+        function createCoinCard(coin) {
+            const changeClass = coin.change14d >= 0 ? 'positive' : 'negative';
+            const changeSign = coin.change14d >= 0 ? '+' : '';
+            const badgeClass = getBadgeClass(coin.grade);
+            
+            const criteriaTags = coin.criteria.map((c, i) => {
+                const passClass = coin.passed[i] ? 'pass' : 'fail';
+                const icon = coin.passed[i] ? '✓' : '✗';
+                return `<span class="tag ${passClass}">${icon} ${c}</span>`;
+            }).join('');
+            
+            return `
+                <article class="coin-card" data-grade="${coin.grade}">
+                    <div class="card-header">
+                        <div class="coin-name">
+                            <span class="coin-symbol">${coin.name}</span>
+                            <span class="coin-pair">${coin.symbol} · 24h Vol $${(coin.volume / 1000000).toFixed(2)}M</span>
+                        </div>
+                        <div class="${badgeClass}">
+                            <div class="score-dots">${createScoreDots(coin.score, coin.maxScore)}</div>
+                            SCORE ${coin.score}/${coin.maxScore}
+                        </div>
+                    </div>
+                    
+                    <div class="price-section">
+                        <span class="current-price">$${coin.price.toFixed(4)}</span>
+                        <span class="price-change ${changeClass}">${changeSign}${coin.change14d.toFixed(1)}%</span>
+                    </div>
+                    
+                    <div class="chart-container">
+                        ${createSparkline(coin.sparkline, coin.change14d >= 0)}
+                    </div>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric">
+                            <div class="metric-label">14d High</div>
+                            <div class="metric-value">$${coin.high14d.toFixed(4)}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">จาก High</div>
+                            <div class="metric-value ${coin.price >= coin.high14d * 0.95 ? 'strong' : ''}">
+                                ${((coin.price / coin.high14d - 1) * 100).toFixed(1)}%
+                            </div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">ADX(14) 4h</div>
+                            <div class="metric-value">${formatMetric(coin.adx)}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">RSI(14) 4h</div>
+                            <div class="metric-value ${coin.rsi !== null && coin.rsi < 30 ? 'strong' : ''}">
+                                ${formatMetric(coin.rsi)}
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="criteria-tags">
+                        ${criteriaTags}
+                    </div>
+                </article>
+            `;
+        }
+
+        // ============================================================
+        // ฟังก์ชันแสดงผลทั้งหมด
+        // ============================================================
+        function renderCoins(coins) {
+            const grid = document.getElementById('scannerGrid');
+            
+            if (coins.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <h3>ไม่พบเหรียญที่ตรงเงื่อนไข</h3>
+                        <p>ลองปรับตัวกรองหรือรีเฟรชข้อมูลใหม่</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = coins.map(createCoinCard).join('');
+            updateStats(coins);
+        }
+
+        // ============================================================
+        // ฟังก์ชันอัปเดตสถิติ
+        // ============================================================
+        function updateStats(coins) {
+            document.getElementById('statTotal').textContent = coins.length;
+            document.getElementById('statAPlus').textContent = coins.filter(c => c.grade === 'A+').length;
+            document.getElementById('statA').textContent = coins.filter(c => c.grade === 'A').length;
+            document.getElementById('statWatch').textContent = coins.filter(c => c.grade === 'Watch').length;
+        }
+
+        // ============================================================
+        // ฟังก์ชันกรองตามเกรด
+        // ============================================================
+        function filterGrade(grade) {
+            currentFilter = grade;
+            
+            // อัปเดตปุ่ม active
+            document.querySelectorAll('.controls .btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.textContent.includes(grade) || (grade === 'all' && btn.textContent.includes('ทั้งหมด'))) {
+                    btn.classList.add('active');
+                }
+            });
+            
+            applyFilterAndSort();
+        }
+
+        // ============================================================
+        // ฟังก์ชันเรียงลำดับ
+        // ============================================================
+        function sortCoins() {
+            applyFilterAndSort();
+        }
+
+        function applyFilterAndSort() {
+            let filtered = currentFilter === 'all' 
+                ? [...allCoins] 
+                : allCoins.filter(c => c.grade === currentFilter);
+            
+            const sortBy = document.getElementById('sortSelect').value;
+            
+            filtered.sort((a, b) => {
+                if (sortBy === 'score') return b.score - a.score;
+                if (sortBy === 'change') return b.change14d - a.change14d;
+                if (sortBy === 'volume') return b.volume - a.volume;
+                if (sortBy === 'rsi') return (b.rsi || 0) - (a.rsi || 0);
+                return 0;
+            });
+            
+            renderCoins(filtered);
+        }
+
+        // ============================================================
+        // ฟังก์ชันรีเฟรชข้อมูล
+        // ============================================================
+        function refreshData() {
+            const grid = document.getElementById('scannerGrid');
+            grid.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    กำลังโหลดข้อมูล...
+                </div>
+            `;
+            
+            // จำลองการโหลด 1 วินาที แล้วแสดงผล
+            setTimeout(() => {
+                applyFilterAndSort();
+            }, 1000);
+            
+            // ถ้าต่อ API จริง ให้ใช้ fetch ตรงนี้
+            // fetch('/api/scanner-data')
+            //     .then(r => r.json())
+            //     .then(data => {
+            //         allCoins = data;
+            //         applyFilterAndSort();
+            //     });
+        }
+
+        // ============================================================
+        // โหลดครั้งแรก
+        // ============================================================
+        document.addEventListener('DOMContentLoaded', () => {
+            applyFilterAndSort();
+        });
+    </script>
+</body>
+</html>
