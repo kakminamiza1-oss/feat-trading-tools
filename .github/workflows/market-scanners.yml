@@ -1,13 +1,13 @@
 name: market-scanners
 
 # รวมสแกนเนอร์คริปโตเข้า GitHub Actions เดียว (ไม่ต้องเปิดเครื่อง):
-#  1) radar_scan.py      -> radar_scan.json  (แทน Cloudflare Worker ที่ล่มบ่อย)
-#  2) trend_rider_cron.py-> trend_rider_live_cron.html (Trend Rider dashboard)
-#  3) notify_tg.py       -> แจ้ง Telegram เมื่อเจอสัญญาณใหม่ (dedup ผ่าน state ใน repo)
+#  1) radar_scan.py      -> radar_scan.json
+#  2) trend_rider_cron.py-> trend_rider_live_cron.html
+#  3) notify_tg.py       -> แจ้ง Telegram เมื่อเจอสัญญาณใหม่
 # รันทุก 15 นาที + กดมือได้ (workflow_dispatch)
 on:
   schedule:
-    - cron: "*/15 * * * *"      # ทุก 15 นาที
+    - cron: "*/15 * * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -34,27 +34,42 @@ jobs:
       - name: Install dependencies
         run: pip install -r scanner/requirements.txt
 
-      - name: Radar scan (เขียน radar_scan.json)
+      - name: Radar scan
         run: python scanner/radar_scan.py
 
-      - name: Trend Rider scan (เขียน trend_rider_live_cron.html)
+      - name: Trend Rider scan
         run: python scanner/trend_rider_cron.py
 
-      - name: Telegram แจ้งเตือนสัญญาณใหม่
+      # Scanners may exit successfully without writing outputs when both APIs
+      # are unavailable. Keep downstream notification/commit steps deterministic.
+      - name: Ensure scanner outputs exist
+        run: |
+          test -f radar_scan.json || printf '[]\n' > radar_scan.json
+          test -f trend_rider_live_cron_signals.json || printf '[]\n' > trend_rider_live_cron_signals.json
+          if [ ! -f trend_rider_live_cron.html ]; then
+            printf '%s\n' '<!doctype html><meta charset="utf-8"><title>Trend Rider</title><p>Market data unavailable; try again on the next scan.</p>' > trend_rider_live_cron.html
+          fi
+
+      - name: Telegram notifications
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: |
           python scanner/notify_tg.py --signals radar_scan.json --state .tg_state_radar.json --source radar
-          python scanner/notify_tg.py --signals trend_rider_live_cron_signals.json --state .tg_state_trendrider.json --source trendrider || true
+          python scanner/notify_tg.py --signals trend_rider_live_cron_signals.json --state .tg_state_trendrider.json --source trendrider
 
-      - name: Commit & push (html + json + state)
+      - name: Ensure Telegram state files exist
+        run: |
+          test -f .tg_state_radar.json || printf '[]\n' > .tg_state_radar.json
+          test -f .tg_state_trendrider.json || printf '[]\n' > .tg_state_trendrider.json
+
+      - name: Commit & push outputs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name "market-bot"
           git config user.email "bot@noreply.github.com"
-          git add radar_scan.json trend_rider_live_cron.html .tg_state_radar.json .tg_state_trendrider.json
+          git add radar_scan.json trend_rider_live_cron.html trend_rider_live_cron_signals.json .tg_state_radar.json .tg_state_trendrider.json
           if git diff --cached --quiet; then
             echo "no change, skip commit"
           else
